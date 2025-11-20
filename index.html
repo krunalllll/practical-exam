@@ -27,15 +27,16 @@
             font-weight: 600;
         }
 
-        /* ---------- FORM UI ---------- */
+        /* ---------- Form Box ---------- */
         .form-box {
             width: 90%;
             max-width: 900px;
             margin: auto;
-            background: white;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
             margin-bottom: 25px;
         }
 
@@ -52,11 +53,12 @@
             border-radius: 8px;
             border: 1px solid #bbb;
             outline: none;
+            transition: 0.3s;
         }
 
         input:focus {
             border-color: #6a0dad;
-            box-shadow: 0 0 5px #d9b3ff;
+            box-shadow: 0 0 8px #d9b3ff;
         }
 
         #add {
@@ -65,29 +67,59 @@
             color: white;
             padding: 12px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             margin-top: 10px;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
             transition: 0.3s;
         }
 
         #add:hover {
+            transform: scale(1.03);
             background: #520190;
         }
 
+        /* Ripple Effect */
+        #add::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        @keyframes ripple {
+            to {
+                opacity: 0;
+                transform: scale(20);
+            }
+        }
+
+        /* ---------- Search ---------- */
         #search {
             width: 60%;
             display: block;
             margin: 20px auto;
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid #bbb;
             outline: none;
             font-size: 16px;
+            transition: 0.3s;
         }
 
-        /* ---------- CARD UI ---------- */
+        #search:focus {
+            border-color: #6a0dad;
+            box-shadow: 0 0 10px #c38aff;
+        }
+
+        /* ---------- Cards ---------- */
         #con {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -96,37 +128,53 @@
         }
 
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(12px);
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
-            transition: 0.3s;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: 0.35s ease;
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        img {
+        .card img {
             width: 100%;
             height: 220px;
+            border-radius: 12px;
             object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            transition: 0.3s ease;
         }
 
-        h4 {
-            margin: 5px 0;
+        .card:hover img {
+            transform: scale(1.08);
         }
 
         button {
             padding: 10px 18px;
             border: none;
-            border-radius: 6px;
-            margin: 5px;
+            border-radius: 8px;
+            margin: 6px;
             cursor: pointer;
             transition: 0.3s;
+            font-weight: 600;
         }
 
         .edit {
@@ -136,6 +184,7 @@
 
         .edit:hover {
             background: #005fcc;
+            transform: scale(1.05);
         }
 
         .delete {
@@ -145,132 +194,234 @@
 
         .delete:hover {
             background: #cc0027;
+            transform: scale(1.05);
         }
+
+
+        /* ------------------ VIEW MODAL ------------------ */
+        #modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        #modalBox {
+            width: 90%;
+            max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            animation: pop 0.3s ease;
+        }
+
+        @keyframes pop {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        #modal img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        #closeModal {
+            background: #6a0dad;
+            color: white;
+            width: 100%;
+            margin-top: 15px;
+            border-radius: 10px;
+        }
+
     </style>
 </head>
 
 <body>
 
-    <h2>🍽️ Recipe Book</h2>
+<h2>🍽️ Recipe Book</h2>
 
-    <div class="form-box">
-        <div class="form-grid">
-            <input type="text" id="name" placeholder="Recipe Name">
-            <input type="text" id="ingredient" placeholder="Ingredient">
-            <input type="text" id="instructions" placeholder="Instructions">
-            <input type="text" id="image" placeholder="Image URL">
-        </div>
-
-        <button id="add">ADD RECIPE</button>
+<div class="form-box">
+    <div class="form-grid">
+        <input type="text" id="name" placeholder="Recipe Name">
+        <input type="text" id="ingredient" placeholder="Ingredient">
+        <input type="text" id="instructions" placeholder="Instructions">
+        <input type="text" id="image" placeholder="Image URL">
     </div>
 
-    <input type="text" id="search" placeholder="🔍 Search Any Recipe">
+    <button id="add">ADD RECIPE</button>
+</div>
 
-    <div id="con"></div>
+<input type="text" id="search" placeholder="🔍 Search Any Recipe">
 
-    <script>
-        const addrecipe = document.getElementById("add");
-        const container = document.getElementById("con");
-        const searchInput = document.getElementById("search");
+<div id="con"></div>
 
-        function displayRecipes(filteredRecipes = null) {
-            const recipes = filteredRecipes || JSON.parse(localStorage.getItem("recipes")) || [];
-            container.innerHTML = "";
+<!-- 🔥 VIEW MODAL -->
+<div id="modal">
+    <div id="modalBox">
+        <img id="mImg">
+        <h2 id="mName"></h2>
+        <p><b>Ingredients:</b> <span id="mIng"></span></p>
+        <p><b>Instructions:</b> <span id="mIns"></span></p>
+        <button id="closeModal">Close</button>
+    </div>
+</div>
 
-            recipes.forEach((recipe, index) => {
-                const card = document.createElement("div");
-                card.className = "card";
+<script>
+    const addrecipe = document.getElementById("add");
+    const container = document.getElementById("con");
+    const searchInput = document.getElementById("search");
 
-                card.innerHTML = `
+    const modal = document.getElementById("modal");
+    const mImg = document.getElementById("mImg");
+    const mName = document.getElementById("mName");
+    const mIng = document.getElementById("mIng");
+    const mIns = document.getElementById("mIns");
+
+    function openModal(recipe) {
+        mImg.src = recipe.image;
+        mName.textContent = recipe.name;
+        mIng.textContent = recipe.ingredient;
+        mIns.textContent = recipe.instructions;
+        modal.style.display = "flex";
+    }
+
+    document.getElementById("closeModal").onclick = () => {
+        modal.style.display = "none";
+    };
+
+    /* ---------- Display Recipes ---------- */
+    function displayRecipes(filteredRecipes = null) {
+        const recipes = filteredRecipes || JSON.parse(localStorage.getItem("recipes")) || [];
+        container.innerHTML = "";
+
+        recipes.forEach((recipe, index) => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
                 <img src="${recipe.image}" alt="Recipe Image">
                 <h3>${recipe.name}</h3><hr>
                 <h4><b>Ingredient:</b> ${recipe.ingredient}</h4><hr>
                 <h4><b>Instructions:</b> ${recipe.instructions}</h4>
             `;
 
-                const editBtn = document.createElement("button");
-                editBtn.textContent = "Edit";
-                editBtn.className = "edit";
-                editBtn.onclick = () => editRecipe(index);
+            /* 🔥 Card click = View Modal */
+            card.onclick = () => openModal(recipe);
 
-                const deleteBtn = document.createElement("button");
-                deleteBtn.textContent = "Delete";
-                deleteBtn.className = "delete";
-                deleteBtn.onclick = () => deleteRecipe(index);
+            const editBtn = document.createElement("button");
+            editBtn.textContent = "Edit";
+            editBtn.className = "edit";
+            editBtn.onclick = (event) => {
+                event.stopPropagation();
+                editRecipe(index);
+            };
 
-                card.appendChild(editBtn);
-                card.appendChild(deleteBtn);
-                container.appendChild(card);
-            });
-        }
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.className = "delete";
+            deleteBtn.onclick = (event) => {
+                event.stopPropagation();
+                deleteRecipe(index);
+            };
 
-        function filterRecipes(keyword) {
-            const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
-            const filtered = recipes.filter(r =>
-                r.name.toLowerCase().includes(keyword) ||
-                r.ingredient.toLowerCase().includes(keyword) ||
-                r.instructions.toLowerCase().includes(keyword)
-            );
-            displayRecipes(filtered);
-        }
-
-        searchInput.addEventListener("input", () => {
-            let keyword = searchInput.value.toLowerCase().trim();
-            filterRecipes(keyword);
+            card.appendChild(editBtn);
+            card.appendChild(deleteBtn);
+            container.appendChild(card);
         });
+    }
 
-        function editRecipe(index) {
-            const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
-            const recipe = recipes[index];
+    /* ---------- Search Filter ---------- */
+    function filterRecipes(keyword) {
+        const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
+        const filtered = recipes.filter(r =>
+            r.name.toLowerCase().includes(keyword) ||
+            r.ingredient.toLowerCase().includes(keyword) ||
+            r.instructions.toLowerCase().includes(keyword)
+        );
+        displayRecipes(filtered);
+    }
 
-            const newName = prompt("Edit Name", recipe.name);
-            const newIngredient = prompt("Edit Ingredient", recipe.ingredient);
-            const newInstructions = prompt("Edit Instructions", recipe.instructions);
-            const newimg = prompt("Edit image url", recipe.image);
+    searchInput.addEventListener("input", () => {
+        let keyword = searchInput.value.toLowerCase().trim();
+        filterRecipes(keyword);
+    });
 
-            if (newName && newIngredient && newInstructions) {
-                recipes[index] = {
-                    name: newName,
-                    ingredient: newIngredient,
-                    instructions: newInstructions,
-                    image: newimg
-                };
-                localStorage.setItem("recipes", JSON.stringify(recipes));
-                displayRecipes();
-            }
-        }
+    /* ---------- Inline Edit Recipe ---------- */
+    function editRecipe(index) {
+        const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
+        const recipe = recipes[index];
 
-        function deleteRecipe(index) {
-            const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
-            recipes.splice(index, 1);
+        const cards = document.querySelectorAll(".card");
+        const card = cards[index];
+
+        card.innerHTML = `
+            <img src="${recipe.image}" style="width:100%;height:200px;border-radius:10px;margin-bottom:10px">
+
+            <input id="editName" value="${recipe.name}" style="width:100%;padding:8px;margin:5px 0;border-radius:6px;border:1px solid #bbb;">
+            <input id="editIngredient" value="${recipe.ingredient}" style="width:100%;padding:8px;margin:5px 0;border-radius:6px;border:1px solid #bbb;">
+            <input id="editInstructions" value="${recipe.instructions}" style="width:100%;padding:8px;margin:5px 0;border-radius:6px;border:1px solid #bbb;">
+            <input id="editImage" value="${recipe.image}" style="width:100%;padding:8px;margin:5px 0;border-radius:6px;border:1px solid #bbb;">
+
+            <button id="saveBtn" style="background:green;color:white;padding:10px 18px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Save</button>
+            <button id="cancelBtn" style="background:#ff0033;color:white;padding:10px 18px;border:none;border-radius:6px;margin-top:10px;cursor:pointer;">Cancel</button>
+        `;
+
+        document.getElementById("saveBtn").onclick = () => {
+            recipes[index] = {
+                name: document.getElementById("editName").value,
+                ingredient: document.getElementById("editIngredient").value,
+                instructions: document.getElementById("editInstructions").value,
+                image: document.getElementById("editImage").value
+            };
+
             localStorage.setItem("recipes", JSON.stringify(recipes));
             displayRecipes();
-        }
+        };
 
-        addrecipe.addEventListener("click", () => {
-            const name = document.getElementById("name").value.trim();
-            const ingredient = document.getElementById("ingredient").value.trim();
-            const instructions = document.getElementById("instructions").value.trim();
-            const image = document.getElementById("image").value.trim();
+        document.getElementById("cancelBtn").onclick = () => {
+            displayRecipes();
+        };
+    }
 
-            if (name && ingredient && instructions) {
-                const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
-                recipes.push({ name, ingredient, instructions, image });
-                localStorage.setItem("recipes", JSON.stringify(recipes));
-
-                document.getElementById("name").value = "";
-                document.getElementById("ingredient").value = "";
-                document.getElementById("instructions").value = "";
-                document.getElementById("image").value = "";
-
-                displayRecipes();
-            }
-        });
-
+    /* ---------- Delete Recipe ---------- */
+    function deleteRecipe(index) {
+        const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
+        recipes.splice(index, 1);
+        localStorage.setItem("recipes", JSON.stringify(recipes));
         displayRecipes();
-    </script>
+    }
+
+    /* ---------- Add Recipe ---------- */
+    addrecipe.addEventListener("click", () => {
+        const name = document.getElementById("name").value.trim();
+        const ingredient = document.getElementById("ingredient").value.trim();
+        const instructions = document.getElementById("instructions").value.trim();
+        const image = document.getElementById("image").value.trim();
+
+        if (name && ingredient && instructions) {
+            const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
+            recipes.push({ name, ingredient, instructions, image });
+            localStorage.setItem("recipes", JSON.stringify(recipes));
+
+            document.getElementById("name").value = "";
+            document.getElementById("ingredient").value = "";
+            document.getElementById("instructions").value = "";
+            document.getElementById("image").value = "";
+
+            displayRecipes();
+        }
+    });
+
+    displayRecipes();
+</script>
 
 </body>
 </html>
-
-
